@@ -1,4 +1,5 @@
-import { LogLevel, SapphireClient } from '@sapphire/framework';
+import { container, LogLevel, SapphireClient } from '@sapphire/framework';
+import { Player } from 'discord-player';
 import { GatewayIntentBits, Partials } from 'discord.js';
 import './lib/setup';
 
@@ -25,6 +26,21 @@ const client = new SapphireClient({
 	partials: [Partials.Channel],
 	loadMessageCommandListeners: true
 });
+
+container.player = new Player(client, {
+	ytdlOptions: {
+		filter: 'audioonly',
+		quality: 'highestaudio',
+		highWaterMark: 1 << 25
+	}
+});
+// const player =);
+// // add the trackStart event so when a song will be played this message will be sent
+// player.on('trackStart', (queue: any, track) => {
+// 	if (queue.metadata) {
+// 		queue.metadata?.channel.send(`🎶 | Now playing **${track.title}**!`);
+// 	}
+// });
 
 const main = async () => {
 	try {

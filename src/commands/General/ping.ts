@@ -1,63 +1,24 @@
-import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
-import { send } from '@sapphire/plugin-editable-commands';
-import { ApplicationCommandType, Message } from 'discord.js';
+import { isMessageInstance } from '@sapphire/discord.js-utilities';
+import { ChatInputCommand, Command } from '@sapphire/framework';
 
-@ApplyOptions<Command.Options>({
-	description: 'ping pong'
-})
-export class UserCommand extends Command {
-	// Register slash and context menu command
-	public override registerApplicationCommands(registry: Command.Registry) {
-		// Register slash command
-		registry.registerChatInputCommand({
-			name: this.name,
-			description: this.description
-		});
-		// Register context menu command available from any message
-		registry.registerContextMenuCommand({
-			name: this.name,
-			type: ApplicationCommandType.Message
-		});
-		// Register context menu command available from any user
-		registry.registerContextMenuCommand({
-			name: this.name,
-			type: ApplicationCommandType.User
-		});
+export class PingCommand extends Command {
+	public constructor(context: Command.Context, options: Command.Options) {
+		super(context, { ...options });
 	}
 
-	// Message command
-	public async messageRun(message: Message) {
-		const msg = await send(message, 'Ping?');
-
-		const content = `Pong! Bot Latency ${Math.round(this.container.client.ws.ping)}ms. API Latency ${
-			(msg.editedTimestamp || msg.createdTimestamp) - (message.editedTimestamp || message.createdTimestamp)
-		}ms.`;
-
-		return send(message, content);
+	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
+		registry.registerChatInputCommand((builder) => builder.setName('ping').setDescription('Ping bot to see if it is alive'));
 	}
-	// slash command
+
 	public async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
-		const msg = await interaction.reply({ content: 'Ping?', fetchReply: true });
+		const msg = await interaction.reply({ content: `Ping?`, ephemeral: true, fetchReply: true });
 
-		const content = `Pong! Bot Latency ${Math.round(this.container.client.ws.ping)}ms. API Latency ${
-			msg.createdTimestamp - interaction.createdTimestamp
-		}ms.`;
+		if (isMessageInstance(msg)) {
+			const diff = msg.createdTimestamp - interaction.createdTimestamp;
+			const ping = Math.round(this.container.client.ws.ping);
+			return interaction.editReply(`Pong 🏓! (Round trip took: ${diff}ms. Heartbeat: ${ping}ms.)`);
+		}
 
-		return await interaction.editReply({
-			content: content
-		});
-	}
-	// context menu command
-	public async contextMenuRun(interaction: Command.ContextMenuCommandInteraction) {
-		const msg = await interaction.reply({ content: 'Ping?', fetchReply: true });
-
-		const content = `Pong! Bot Latency ${Math.round(this.container.client.ws.ping)}ms. API Latency ${
-			msg.createdTimestamp - interaction.createdTimestamp
-		}ms.`;
-
-		return await interaction.editReply({
-			content: content
-		});
+		return interaction.editReply('Failed to retrieve ping :(');
 	}
 }
