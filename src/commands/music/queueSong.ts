@@ -7,7 +7,9 @@ export class UserCommand extends Command {
 	}
 
 	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
-		registry.registerChatInputCommand((builder) => builder.setName('queue').setDescription(' Xem queue 🚦'));
+		registry.registerChatInputCommand((builder) => builder.setName('queue').setDescription(' Xem queue 🚦'), {
+			idHints: ['1064261314337316936']
+		});
 	}
 
 	public override async chatInputRun(interaction: CommandInteraction) {
@@ -37,6 +39,7 @@ export class UserCommand extends Command {
 			embeds: [
 				embed
 					.setAuthor({ name: interaction.user.username })
+					.setColor('#7d34eb')
 					.setDescription(
 						`** 🟢 Dang choi**\n` +
 							(currentSong ? `\`[${currentSong.duration}]\` ${currentSong.title} - <@${currentSong.requestedBy.id}>` : 'None') +

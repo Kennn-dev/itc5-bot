@@ -1,7 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChatInputCommand, Command, CommandOptions, container } from '@sapphire/framework';
-import type { CommandInteraction, GuildChannelResolvable, GuildMember } from 'discord.js';
-import { EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, CommandInteraction, EmbedBuilder, GuildChannelResolvable, GuildMember, StringSelectMenuBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
 	preconditions: ['GuildOnly', 'InVoiceChannelOnly']
@@ -25,10 +24,13 @@ export class PlayCommand extends Command {
 			return interaction.reply('Invalid guild');
 		}
 
-		let queue = container.player.getQueue(interaction.guild);
+		let queue = await container.player.getQueue(interaction.guild);
+		console.log('==============	QUEUE');
+		console.log(queue);
+
 		if (!queue) {
 			// Create a play queue for the server if not have
-			queue = container.player.createQueue(interaction.guild);
+			queue = await container.player.createQueue(interaction.guild);
 		}
 
 		// Wait until you are connected to the channel
@@ -44,7 +46,6 @@ export class PlayCommand extends Command {
 		}
 
 		// console.log(result);
-		let embed = new EmbedBuilder();
 
 		// Add the tracks to the queue
 		// const playlist = result.playlist;
@@ -55,9 +56,29 @@ export class PlayCommand extends Command {
 			return interaction.reply('Khum tim thay bai nao 🤡');
 		}
 
+		const options = tracks.map((v) => ({
+			label: v.title,
+			value: v.id
+		}));
+		const row = new ActionRowBuilder().setComponents(new StringSelectMenuBuilder().setCustomId('SELECT_SONG').setOptions(options));
+		await interaction.reply({
+			content: `Chon bai di 🤡`,
+			components: [row.toJSON() as any]
+		});
+
 		// Add the track to the queue
 		const song = result.tracks[0];
-		queue.addTrack(song);
+		await queue.addTrack(song);
+
+		// PLAYLIST TYPE IMPLEMENT HERE
+
+		// console.log(queue);
+
+		// Play the song
+		if (!queue.playing) await queue.play();
+		// Respond with the embed containing information about the player
+
+		let embed = new EmbedBuilder();
 		embed
 			.setTitle(`**[${song.title}]**`)
 			.setAuthor({ name: song.requestedBy.username })
@@ -67,24 +88,21 @@ export class PlayCommand extends Command {
 			.setFooter({ text: `Thoi gian: ${song.duration}` })
 			.setColor('#149dff');
 
-		// PLAYLIST TYPE IMPLEMENT HERE
-
-		console.log(queue);
-
-		// Play the song
-		if (!queue.playing) await queue.play();
-		// Respond with the embed containing information about the player
 		return await interaction.reply({
 			embeds: [embed]
 		});
 	}
 
 	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
-		registry.registerChatInputCommand((builder) =>
-			builder
-				.setName('play')
-				.setDescription('Play 1 bai nhac ? Yah sure 🎶')
-				.addStringOption((op) => op.setName('query').setDescription('song url or name').setRequired(true))
+		registry.registerChatInputCommand(
+			(builder) =>
+				builder
+					.setName('play')
+					.setDescription('Play 1 bai nhac ? Yah sure 🎶')
+					.addStringOption((op) => op.setName('query').setDescription('song url or name').setRequired(true)),
+			{
+				idHints: ['1064163584256520213']
+			}
 		);
 	}
 }
