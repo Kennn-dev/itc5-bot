@@ -13,14 +13,14 @@ export class LeaveCommand extends Command {
 	}
 
 	public override async chatInputRun(interaction: CommandInteraction) {
-		if (!interaction.guild) {
-			await interaction.reply('Invalid guild 🤡');
+		if (!interaction.guildId) {
+			await interaction.reply('Invalid guildId 🤡');
 			return;
 		}
 
-		const queue = await container.player.getQueue(interaction.guild);
+		const queue = await container.player.getQueue(interaction.guildId);
 		// If there is no queue, return
-		await queue?.destroy();
+		await queue?.leave();
 
 		// Return an embed to the user saying the song has been skipped
 		await interaction.reply(`Bye 👋`);

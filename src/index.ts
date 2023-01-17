@@ -1,6 +1,7 @@
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
-import { Player } from 'discord-player';
+import { Player } from 'discord-music-player';
 import { GatewayIntentBits, Partials } from 'discord.js';
+import playerListenEvents from './lib/playerListenEvents';
 import './lib/setup';
 
 const client = new SapphireClient({
@@ -28,12 +29,19 @@ const client = new SapphireClient({
 });
 
 container.player = new Player(client, {
-	ytdlOptions: {
+	leaveOnStop: false,
+	quality: 'high',
+	volume: 60,
+	leaveOnEnd: false,
+	leaveOnEmpty: false,
+	ytdlRequestOptions: {
 		filter: 'audioonly',
 		quality: 'highestaudio',
 		highWaterMark: 1 << 25
 	}
 });
+container.searchTracks = undefined;
+playerListenEvents();
 // const player =);
 // // add the trackStart event so when a song will be played this message will be sent
 // player.on('trackStart', (queue: any, track) => {

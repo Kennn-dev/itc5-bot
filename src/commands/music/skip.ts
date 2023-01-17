@@ -13,30 +13,28 @@ export class SkipCommand extends Command {
 	}
 
 	public override async chatInputRun(interaction: CommandInteraction) {
-		if (!interaction.guild) {
+		if (!interaction.guildId) {
 			await interaction.reply('Invalid guild 🤡');
 			return;
 		}
 
-		const queue = await container.player.getQueue(interaction.guild);
+		const queue = await container.player.getQueue(interaction.guildId);
 		// If there is no queue, return
 		if (!queue) {
 			await interaction.reply('Khum co bai nao het ! 🤡');
 			return;
 		}
-		const currentSong = queue.current;
+		const currentSong = queue.nowPlaying;
 		await queue?.skip();
 
-		const tracks = queue.tracks;
-		if (tracks.length > 0) {
-			await queue.play();
+		if (!currentSong) {
+			return interaction.reply('No Song');
 		}
-
 		// Return an embed to the user saying the song has been skipped
-		await interaction.reply({
+		return interaction.reply({
 			embeds: [
 				new EmbedBuilder()
-					.setTitle(`**[${currentSong.title}]**`)
+					.setTitle(`**[${currentSong.name}]**`)
 					.setDescription(`da skip ! ⏭⏭⏭`)
 					.setThumbnail(currentSong.thumbnail)
 					.setColor('#eb349e')
