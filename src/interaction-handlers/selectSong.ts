@@ -21,7 +21,8 @@ export class MenuHandler extends InteractionHandler {
 	}
 
 	public override async run(interaction: StringSelectMenuInteraction<any>) {
-		const songItem = interaction.values[0];
+		const fil = (s: string): string => s.substring(0, 90);
+		const songItem = fil(interaction.values[0]);
 
 		// console.log('Songs 111', songItem);
 		if (!songItem) {
@@ -65,8 +66,9 @@ export class MenuHandler extends InteractionHandler {
 
 		// Clear searched tracks
 		container.searchTracks = undefined;
-		return await interaction.reply({
+		await interaction.reply({
 			content: 'Song selected'
 		});
+		return;
 	}
 }

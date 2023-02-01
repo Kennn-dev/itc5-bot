@@ -13,9 +13,7 @@ export class UserCommand extends Command {
 	}
 
 	public override async chatInputRun(interaction: CommandInteraction) {
-		await interaction.deferReply({
-			ephemeral: true
-		});
+		// await interaction.deferReply();
 		if (!interaction.guildId) {
 			await interaction.reply('Invalid guildId 🤡');
 			return;
@@ -30,7 +28,7 @@ export class UserCommand extends Command {
 		const queueString = queue.songs
 			.slice(1, 10)
 			.map((song, i) => {
-				return `${i === 0 ? '🟡' : '🔴'} ${i + 1} - [${song.duration}]\` ${song.name} - <@${song?.requestedBy?.id}>`;
+				return ` \` ${i === 0 ? '🟡' : '🔴'} ${i + 1} \` - [${song.duration}] ${song.name} - <@${song?.requestedBy?.id}>`;
 			})
 			.join('\n');
 
@@ -40,7 +38,8 @@ export class UserCommand extends Command {
 			return interaction.reply(`No song playin`);
 		}
 		let embed = new EmbedBuilder();
-		return interaction.reply({
+		console.log('done');
+		await interaction.reply({
 			embeds: [
 				embed
 					.setAuthor({ name: interaction.user.username })
@@ -53,5 +52,6 @@ export class UserCommand extends Command {
 					.setThumbnail(currentSong.thumbnail)
 			]
 		});
+		return;
 	}
 }
