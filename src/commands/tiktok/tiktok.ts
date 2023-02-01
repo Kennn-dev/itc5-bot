@@ -26,7 +26,7 @@ export class TiktokCommand extends Command {
 				url: 'https://tiktok-video-no-watermark2.p.rapidapi.com/feed/list',
 				params: { region: 'VN', count: '1' },
 				headers: {
-					'X-RapidAPI-Key': 'ca1a5fdda6mshf8ce50808ef877fp18d2a6jsn90d701ac0834',
+					'X-RapidAPI-Key': process.env.TIKTOK_RAPID_KEY,
 					'X-RapidAPI-Host': 'tiktok-video-no-watermark2.p.rapidapi.com'
 				}
 			};
