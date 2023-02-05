@@ -53,7 +53,7 @@ playerListenEvents();
 const main = async () => {
 	try {
 		client.logger.info('Logging in');
-		await client.login();
+		await client.login(process.env.DISCORD_TOKEN);
 		client.logger.info('logged in');
 	} catch (error) {
 		client.logger.fatal(error);
