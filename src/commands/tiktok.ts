@@ -1,8 +1,8 @@
+import type { TiktokVideo } from '@/types/tiktok';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChatInputCommand, Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
 import { CommandInteraction, EmbedBuilder } from 'discord.js';
-import type { TiktokVideo } from './types';
 
 @ApplyOptions<CommandOptions>({
 	preconditions: ['GuildOnly']
