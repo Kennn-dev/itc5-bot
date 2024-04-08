@@ -47,6 +47,7 @@ export class AramCommand extends Command {
 		try {
 			await interaction.deferReply();
 			const membersIds: string[] = this.getAllMembers(interaction);
+			console.log(membersIds);
 			const team1Mem = membersIds.slice(0, 5);
 			const team2Mem = membersIds.slice(5);
 			const { team1, team2 } = this.generatePools();
@@ -56,6 +57,7 @@ export class AramCommand extends Command {
 				teamOnePool: team1,
 				teamTwoPool: team2
 			});
+			console.log('ids', team1, team2, id);
 
 			await this.sendToMembers(team1Mem, id, this.formatedMessage(team1), interaction);
 			await this.sendToMembers(team2Mem, id, this.formatedMessage(team2), interaction);
@@ -115,7 +117,7 @@ export class AramCommand extends Command {
 		const team1 = [];
 		const team2 = [];
 		this.r.pick(championNames);
-
+		console.log(this.r);
 		for (let index = 1; index <= 20; index++) {
 			const champ = this.r.pick(championNames);
 			const idx = championNames.findIndex((v) => v === champ);
@@ -130,7 +132,7 @@ export class AramCommand extends Command {
 				}
 			}
 		}
-
+		console.log(team1, team2);
 		return {
 			team1,
 			team2
@@ -151,7 +153,7 @@ export class AramCommand extends Command {
 		const lastedVersion = versions[0];
 
 		const req = await (await fetch(`http://ddragon.leagueoflegends.com/cdn/${lastedVersion}/data/vi_VN/champion.json`)).json();
-		// console.log(data);
+		// console.log(req.data);
 		if (req.data) {
 			this.champions = req.data;
 		}

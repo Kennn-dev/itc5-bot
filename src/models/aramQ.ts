@@ -1,6 +1,5 @@
 import type { AramQueue } from '@/types/aram';
-import uniqid from 'uniqid';
-
+import { v4 as uuidv4 } from 'uuid';
 export default class Aram {
 	queue: AramQueue[] = [];
 	constructor() {}
@@ -31,7 +30,7 @@ export default class Aram {
 		newQueue.isTeamTwoAccepted = false;
 
 		if (!newQueue.id) {
-			newQueue.id = uniqid();
+			newQueue.id = uuidv4();
 		}
 		this.queue.push(newQueue);
 		return newQueue.id;
